@@ -1,17 +1,17 @@
-from flask import Flask, request, redirect, url_for, session, make_response
+from flask import Flask, request, redirect, url_for, session
 from datetime import datetime
 import os
 
 app = Flask(__name__)
 app.secret_key = os.urandom(24)  # 用于加密 session
 
-# 简单用户数据库（用户名: 密码, 角色）
+# 用户数据库：用户名 -> 密码和角色
 USERS = {
-    'admin': {'password': 'Hpyc20131121', 'role': 'admin'},
-    'user1': {'password': '123456', 'role': 'user'}
+    'Hpyc': {'password': 'Hpyc20131121', 'role': 'admin'},
+    'user1': {'password': '123456', 'role': 'user'}  # 示例普通用户
 }
 
-login_logs = []  # 简单日志列表
+login_logs = []  # 登录日志
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -86,7 +86,7 @@ def home():
 
     return f'''
         <h1>欢迎 {username}！</h1>
-        <p>你是：<b>{role}</b></p>
+        <p>你的身份是：<b>{role}</b></p>
         <p>使用 GitHub 编辑 + Render 部署</p>
         <a href="/logout">退出登录</a>
         <hr>
@@ -101,5 +101,4 @@ def logout():
     return redirect(url_for('login'))
 
 
-if __name__ == '__main__':
-    app.run(debug=True)
+
