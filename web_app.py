@@ -1,0 +1,36 @@
+# 文件名建议：main.py
+
+from flask import Flask, request
+
+app = Flask(__name__)
+
+# 设置密码（你可以改成你想要的）
+PASSWORD = 'Hpyc20131121'
+
+@app.route('/', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        user_password = request.form.get('password')
+        if user_password == PASSWORD:
+            return '''
+                <html>
+                    <head><title>欢迎页面</title></head>
+                    <body>
+                        <h1>欢迎来到我的网站！</h1>
+                        <p>谢谢访问！</p>
+                        <h1>再见</h1>
+                    </body>
+                </html>
+            '''
+        else:
+            return '''
+                <h3>密码错误，请重新输入</h3>
+                <a href="/">返回</a>
+            '''
+    return '''
+        <form method="post">
+            <h2>请输入密码进入页面：</h2>
+            <input type="password" name="password">
+            <input type="submit" value="登录">
+        </form>
+    '''
