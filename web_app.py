@@ -1,37 +1,105 @@
-# 文件名建议：main.py
-
-from flask import Flask, request
+from flask import Flask, request, redirect, url_for, session, make_response
+from datetime import datetime
+import os
 
 app = Flask(__name__)
+app.secret_key = os.urandom(24)  # 用于加密 session
 
-# 设置密码（你可以改成你想要的）
-PASSWORD = 'Hpyc20131121'
+# 简单用户数据库（用户名: 密码, 角色）
+USERS = {
+    'admin': {'password': 'Hpyc20131121', 'role': 'admin'},
+    'user1': {'password': '123456', 'role': 'user'}
+}
+
+login_logs = []  # 简单日志列表
+
 
 @app.route('/', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        user_password = request.form.get('password')
-        if user_password == PASSWORD:
-            return '''
-                <html>
-                    <head><title>这个名字奇怪吧</title></head>
-                    <body>
-                        <h1>欢迎！</h1>
-                        
-                        <h1>使用github进行编辑使用Render Web</h1>
-                        <p>cpu.0.1</p>
-                    </body>
-                </html>
-            '''
+        username = request.form.get('username')
+        password = request.form.get('password')
+        user = USERS.get(username)
+
+        if user and user['password'] == password:
+            session['username'] = username
+            session['role'] = user['role']
+
+            login_logs.append({
+                'user': username,
+                'ip': request.remote_addr,
+                'time': datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+            })
+
+            return redirect(url_for('home'))
         else:
             return '''
-                <h3>密码错误，请重新输入</h3>
+                <h3>用户名或密码错误</h3>
                 <a href="/">返回</a>
             '''
     return '''
+        <h2>登录</h2>
         <form method="post">
-            <h2>请输入密码进入页面：</h2>
-            <input type="password" name="password">
+            用户名: <input type="text" name="username"><br>
+            密码: <input type="password" name="password"><br>
             <input type="submit" value="登录">
         </form>
+        <a href="/register">注册账号</a> | 
+        <a href="/forgot">忘记密码？</a>
     '''
+
+
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    if request.method == 'POST':
+        username = request.form.get('username')
+        password = request.form.get('password')
+        if username in USERS:
+            return '<h3>用户名已存在</h3><a href="/register">返回</a>'
+        USERS[username] = {'password': password, 'role': 'user'}
+        return '<h3>注册成功！请返回登录</h3><a href="/">去登录</a>'
+    return '''
+        <h2>注册</h2>
+        <form method="post">
+            用户名: <input type="text" name="username"><br>
+            密码: <input type="password" name="password"><br>
+            <input type="submit" value="注册">
+        </form>
+    '''
+
+
+@app.route('/forgot')
+def forgot():
+    return '''
+        <h3>暂不支持找回密码，请联系管理员。</h3>
+        <a href="/">返回登录</a>
+    '''
+
+
+@app.route('/home')
+def home():
+    if 'username' not in session:
+        return redirect(url_for('login'))
+
+    username = session['username']
+    role = session.get('role', 'user')
+
+    return f'''
+        <h1>欢迎 {username}！</h1>
+        <p>你是：<b>{role}</b></p>
+        <p>使用 GitHub 编辑 + Render 部署</p>
+        <a href="/logout">退出登录</a>
+        <hr>
+        <h3>最近登录记录：</h3>
+        {"".join([f"<p>{log['time']} - {log['user']} @ {log['ip']}</p>" for log in login_logs[-5:]])}
+    '''
+
+
+@app.route('/logout')
+def logout():
+    session.clear()
+    return redirect(url_for('login'))
+
+
+if __name__ == '__main__':
+    app.run(debug=True)
