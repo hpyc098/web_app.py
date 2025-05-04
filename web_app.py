@@ -109,7 +109,7 @@ def home():
     username = session['username']
     return BASE_STYLE + f'''
         <div class="container">
-            <h1>欢迎，{username}！</h1>
+            <h1>欢迎Hpyc的的用户，{username}！</h1>
             <p><a href="/logout">退出登录</a></p>
             {'<p><a href="/admin">用户管理（仅管理员）</a></p>' if session.get('role') == 'admin' else ''}
         </div>
@@ -119,7 +119,7 @@ def home():
 @app.route('/admin')
 def admin_panel():
     if session.get('role') != 'admin':
-        return BASE_STYLE + '<div class="container"><h3>无权访问</h3><a href="/">返回主页</a></div>'
+        return BASE_STYLE + '<div class="container"><h3>没有权利</h3><a href="/">返回主页</a></div>'
 
     user_list_html = ''.join([f"<p>用户名：<b>{u}</b>，密码：<b>{USERS[u]['password']}</b></p>" for u in USERS])
     return BASE_STYLE + f'''
