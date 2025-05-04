@@ -14,11 +14,12 @@ def login():
         if user_password == PASSWORD:
             return '''
                 <html>
-                    <head><title>你好</title></head>
+                    <head><title>这个名字奇怪吧</title></head>
                     <body>
                         <h1>欢迎！</h1>
-                        <p>谢谢！</p>
-                        <h1>再见</h1>
+                        
+                        <h1>使用github进行编辑使用Render Web</h1>
+                        <p>cpu.0.1</p>
                     </body>
                 </html>
             '''
