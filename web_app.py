@@ -107,7 +107,7 @@ def register():
 def forgot():
     return BASE_STYLE + '''
         <div class="container">
-            <h3>暂不支持找回密码，请联系管理员。</h3>
+            <h3>暂不支持找回密码，请联系hanjunhao098@gmail.com管理员。</h3>
             <a href="/">返回登录</a>
         </div>
     '''
