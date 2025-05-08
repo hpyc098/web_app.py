@@ -10,6 +10,7 @@ app.secret_key = os.urandom(24)
 USERS = {
     'Hpyc': {'password': 'Hpyc20131121', 'role': 'admin'},
     'user1': {'password': '123456', 'role': 'user'}
+    '12345678':{'password':'87654321',' role': 'admin'},
 }
 
 CHAT_FILE = 'chat_data.json'
